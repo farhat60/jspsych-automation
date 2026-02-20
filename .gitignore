@@ -1,6 +1,7 @@
 node_modules/
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
 /.settings/
 /.project
 /.tern-project
