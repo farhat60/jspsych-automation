@@ -1,0 +1,8 @@
+rules:
+  - id: no-math-random-in-jspsych
+    languages:
+      - javascript
+      - typescript
+    message: Avoid Math.random() in jsPsych code. Use this.jsPsych.randomization APIs instead.
+    severity: WARNING
+    pattern: Math.random()
