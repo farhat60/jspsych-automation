@@ -242,8 +242,7 @@ class HtmlButtonResponsePlugin implements JsPsychPlugin<Info> {
       rt:
         this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true) +
         trial.enable_button_after,
-      // response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
-        reponse: Math.random()*(trial.choices.length - 1),
+      response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
     };
 
     const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
