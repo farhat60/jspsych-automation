@@ -244,6 +244,7 @@ class HtmlButtonResponsePlugin implements JsPsychPlugin<Info> {
         trial.enable_button_after,
       response: Math.round(Math.random() * (trial.choices.length - 1)),
     };
+    //math.round breaking code coverage
 
     const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
 
