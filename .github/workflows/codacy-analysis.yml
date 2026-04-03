@@ -19,7 +19,7 @@ jobs:
   opengrep:
     name: Codacy Opengrep
     runs-on: ubuntu-latest
-    if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
 
     steps:
       - name: Checkout code
@@ -37,7 +37,7 @@ jobs:
   coverage:
     name: Codacy Coverage
     runs-on: ubuntu-latest
-    if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
 
     steps:
       - name: Checkout code
