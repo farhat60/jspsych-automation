@@ -24,7 +24,7 @@ function getPackageInfo(packageDir) {
     name: packageJson.name,
     description: packageJson.description,
     author: packageJson.author.name,
-    authorUrl: packageJson.author.url,
+    authorUrl: packageJson.author.url
   };
 }
 
