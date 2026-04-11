@@ -1,6 +1,10 @@
 import { JsPsych, JsPsychPlugin, ParameterType, TrialType } from "jspsych";
 
 import { version } from "../package.json";
+var blah = 123;
+var blah2 = version;
+var blah2 = version;
+var blah = 22; 
 
 const info = <const>{
   name: "html-button-response",
