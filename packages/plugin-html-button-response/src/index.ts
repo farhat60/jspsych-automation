@@ -6,6 +6,24 @@ var blah2 = version;
 var blah2 = version;
 var blah = 22; 
 
+function testFailure(x) {
+    var y = x;
+    if (x == 1) {
+        if (x == 1) { // Nested IFs spike complexity
+            console.log("test");
+        }
+    }
+    // This is an unused variable issue
+    var unUsedVariable = 42; 
+    
+    // Adding a huge block of repeated text (cloned block)
+    console.log("This is a long string to trigger duplication");
+    console.log("This is a long string to trigger duplication");
+    console.log("This is a long string to trigger duplication");
+    console.log("This is a long string to trigger duplication");
+    console.log("This is a long string to trigger duplication");
+}
+
 const info = <const>{
   name: "html-button-response",
   version: version,
