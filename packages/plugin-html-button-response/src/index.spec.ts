@@ -5,6 +5,56 @@ import htmlButtonResponse from ".";
 jest.useFakeTimers();
 
 describe("html-button-response", () => {
+  test("should apply flex layout class when button_layout is set to flex", async () => {
+    const { displayElement } = await startTimeline([
+      {
+        type: htmlButtonResponse,
+        stimulus: "this is html",
+        choices: ["button-choice"],
+        button_layout: "flex",
+      },
+    ]);
+
+    expect(
+      displayElement.querySelector("#jspsych-html-button-response-btngroup")?.classList
+    ).toContain("jspsych-btn-group-flex");
+  });
+
+  test("calculates rows when grid_rows is null and grid_columns is provided", async () => {
+    const { displayElement } = await startTimeline([
+      {
+        type: htmlButtonResponse,
+        stimulus: "this is html",
+        choices: ["a", "b", "c"],
+        grid_rows: null,
+        grid_columns: 2,
+      } as any,
+    ]);
+
+    const buttonGroup = displayElement.querySelector<HTMLElement>(
+      "#jspsych-html-button-response-btngroup"
+    );
+
+    expect(buttonGroup?.style.gridTemplateColumns).toBe("repeat(2, 1fr)");
+    expect(buttonGroup?.style.gridTemplateRows).toBe("repeat(2, 1fr)");
+  });
+
+  test("renders without layout class when button_layout is neither grid nor flex", async () => {
+    const { displayElement } = await startTimeline([
+      {
+        type: htmlButtonResponse,
+        stimulus: "this is html",
+        choices: ["a", "b"],
+        button_layout: "custom",
+      } as any,
+    ]);
+
+    const buttonGroup = displayElement.querySelector("#jspsych-html-button-response-btngroup");
+
+    expect(buttonGroup?.classList.contains("jspsych-btn-group-grid")).toBe(false);
+    expect(buttonGroup?.classList.contains("jspsych-btn-group-flex")).toBe(false);
+  });
+
   it("displays html stimulus and buttons", async () => {
     const { getHTML } = await startTimeline([
       {
