@@ -1,0 +1,33 @@
+name: codacy-analysis
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "30 4 * * 1"
+
+env:
+  HUSKY: 0
+
+jobs:
+  analysis:
+    name: Codacy Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Codacy Analysis CLI
+        if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
+        uses: codacy/codacy-analysis-cli-action@v4
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          upload: true
+          verbose: true
+          max-allowed-issues: 2147483647
+
+      - name: Skip when Codacy token is missing
+        if: ${{ secrets.CODACY_PROJECT_TOKEN == '' }}
+        run: echo "CODACY_PROJECT_TOKEN is not set; skipping Codacy analysis."
