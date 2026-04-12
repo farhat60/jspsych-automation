@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "gulp": "^5.0.0",
-    "gulp-replace": "^1.1.4"
+    "gulp-replace": "^1.1.4",
+    "jest": "^30.3.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.0",

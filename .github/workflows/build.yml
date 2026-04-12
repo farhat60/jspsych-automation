@@ -32,15 +32,3 @@ jobs:
         run: npm run test -- --ci --coverage --maxWorkers=2
         env:
           NODE_OPTIONS: "--max-old-space-size=4096" # Increase heap size for jest
-
-      - name: Upload coverage to Codacy
-        if: ${{ matrix.node == '20.x' }}
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        run: |
-          if [ -z "$CODACY_PROJECT_TOKEN" ]; then
-            echo "CODACY_PROJECT_TOKEN is not set; skipping coverage upload."
-            exit 0
-          fi
-
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage/lcov.info
