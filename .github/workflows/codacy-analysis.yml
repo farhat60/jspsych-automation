@@ -1,0 +1,107 @@
+name: codacy-analysis
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Codacy run mode"
+        required: true
+        type: choice
+        options:
+          - monitor
+          - gate
+        default: monitor
+      directory:
+        description: "Directory to analyze"
+        required: false
+        type: string
+        default: .
+      tool:
+        description: "Optional Codacy tool shortName (empty = all)"
+        required: false
+        type: string
+        default: ""
+      max_allowed_issues:
+        description: "Only used in gate mode"
+        required: false
+        type: number
+        default: 0
+  schedule:
+    - cron: "30 4 * * 1"
+
+env:
+  HUSKY: 0
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  analysis:
+    name: Codacy Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve run parameters
+        id: params
+        run: |
+          MODE="monitor"
+          DIR="."
+          TOOL=""
+          MAX_ALLOWED_ISSUES="2147483647"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODE="${{ github.event.inputs.mode }}"
+            DIR="${{ github.event.inputs.directory }}"
+            TOOL="${{ github.event.inputs.tool }}"
+            if [ "$MODE" = "gate" ]; then
+              MAX_ALLOWED_ISSUES="${{ github.event.inputs.max_allowed_issues }}"
+            fi
+          fi
+
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "directory=$DIR" >> "$GITHUB_OUTPUT"
+          echo "tool=$TOOL" >> "$GITHUB_OUTPUT"
+          echo "max_allowed_issues=$MAX_ALLOWED_ISSUES" >> "$GITHUB_OUTPUT"
+
+      - name: Codacy run summary
+        run: |
+          {
+            echo "## Codacy Analysis Run"
+            echo "- event: ${{ github.event_name }}"
+            echo "- mode: ${{ steps.params.outputs.mode }}"
+            echo "- directory: ${{ steps.params.outputs.directory }}"
+            if [ -n "${{ steps.params.outputs.tool }}" ]; then
+              echo "- tool: ${{ steps.params.outputs.tool }}"
+            else
+              echo "- tool: all enabled Codacy tools"
+            fi
+            echo "- max-allowed-issues: ${{ steps.params.outputs.max_allowed_issues }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run Codacy Analysis CLI
+        if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
+        uses: codacy/codacy-analysis-cli-action@v4
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          directory: ${{ steps.params.outputs.directory }}
+          tool: ${{ steps.params.outputs.tool }}
+          upload: true
+          verbose: true
+          max-allowed-issues: ${{ steps.params.outputs.max_allowed_issues }}
+
+      - name: Skip when Codacy token is missing
+        if: ${{ secrets.CODACY_PROJECT_TOKEN == '' }}
+        run: |
+          echo "CODACY_PROJECT_TOKEN is not set; skipping Codacy analysis."
+          {
+            echo ""
+            echo "### Skipped"
+            echo "Set \`CODACY_PROJECT_TOKEN\` in repository secrets to run Codacy from Actions."
+          } >> "$GITHUB_STEP_SUMMARY"

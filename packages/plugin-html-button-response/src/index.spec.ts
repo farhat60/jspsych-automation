@@ -214,6 +214,27 @@ describe("html-button-response", () => {
       expect(btns[i].hasAttribute("disabled")).toBe(false);
     }
   });
+
+  test("throws when both grid_rows and grid_columns are null", () => {
+    const plugin = new htmlButtonResponse({
+      pluginAPI: {
+        setTimeout: jest.fn(),
+      },
+      finishTrial: jest.fn(),
+    } as any);
+
+    expect(() =>
+      plugin.trial(document.createElement("div"), {
+        stimulus: "this is html",
+        choices: ["button-choice"],
+        grid_rows: null,
+        grid_columns: null,
+        button_layout: "grid",
+      } as any)
+    ).toThrow(
+      "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+    );
+  });
 });
 
 describe("html-button-response simulation", () => {
