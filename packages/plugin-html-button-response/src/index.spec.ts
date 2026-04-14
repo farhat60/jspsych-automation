@@ -5,6 +5,22 @@ import htmlButtonResponse from ".";
 jest.useFakeTimers();
 
 describe("html-button-response", () => {
+  test("should apply flex layout class when button_layout is set to flex", async () => {
+    const { displayElement } = await startTimeline([
+      {
+        type: htmlButtonResponse,
+        stimulus: "this is html",
+        choices: ["button-choice"],
+        button_layout: "flex",
+      },
+    ]);
+
+    expect(
+      displayElement.querySelector("#jspsych-html-button-response-btngroup")?.classList
+    ).toContain("jspsych-btn-group-flex");
+  });
+
+  
   it("displays html stimulus and buttons", async () => {
     const { getHTML } = await startTimeline([
       {
@@ -163,6 +179,27 @@ describe("html-button-response", () => {
     for (let i = 0; i < btns.length; i++) {
       expect(btns[i].hasAttribute("disabled")).toBe(false);
     }
+  });
+
+  test("throws when both grid_rows and grid_columns are null", () => {
+    const plugin = new htmlButtonResponse({
+      pluginAPI: {
+        setTimeout: jest.fn(),
+      },
+      finishTrial: jest.fn(),
+    } as any);
+
+    expect(() =>
+      plugin.trial(document.createElement("div"), {
+        stimulus: "this is html",
+        choices: ["button-choice"],
+        grid_rows: null,
+        grid_columns: null,
+        button_layout: "grid",
+      } as any)
+    ).toThrow(
+      "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+    );
   });
 });
 
